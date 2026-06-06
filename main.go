@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"os"
 
@@ -9,16 +10,15 @@ import (
 	"github.com/resend/resend-go/v3"
 )
 
-// todo adicionar o pacote do json para logs e playload
 type Email struct {
-	From    string
-	To      []string
-	Subject string
-	Bcc     []string
-	Cc      []string
-	ReplyTo string
-	Html    string
-	Text    string
+	From    string   `json:"from"`
+	To      []string `json:"to"`
+	Subject string   `json:"subject"`
+	Bcc     []string `json:"bcc"`
+	Cc      []string `json:"cc"`
+	ReplyTo string   `json:"replyTo"`
+	Html    string   `json:"html"`
+	Text    string   `json:"text"`
 }
 
 func main() {
@@ -30,6 +30,7 @@ func main() {
 	}
 
 	brokerUrl := os.Getenv("BROKER_URL")
+	messagesQueue := os.Getenv("MESSAGES_QUEUE")
 
 	conn, err := amqp.Dial(brokerUrl)
 
@@ -48,9 +49,9 @@ func main() {
 	defer ch.Close()
 
 	msgs, err := ch.Consume(
-		"contact.messages", // nome da fila
-		"",                 // consumer name
-		true,               // auto ack
+		messagesQueue, // nome da fila
+		"",            // consumer name
+		false,         // auto ack
 		false,
 		false,
 		false,
@@ -64,29 +65,39 @@ func main() {
 	log.Println("Aguardando mensagens...")
 
 	for msg := range msgs {
-		log.Printf("Recebido: %s\n", msg.Body)
-	
-		// if err := processMessage(msg.Body); err != nil {
-		// 	msg.Nack(false, true)
-		// 	continue
+		log.Printf("%s\n", msg.Body)
+
+		var email Email
+
+		err := json.Unmarshal(msg.Body, &email)
+
+		if err != nil {
+			log.Println(err)
+			msg.Nack(false, true)
+			return
+		}
+
+		log.Println(email)
+
+		// Email{
+		// 	To: []string{
+		// 		"felipemaejima@gmail.com",
+		// 	},
+		// 	Subject: "Teste",
+		// 	Html:    "<h1>Hello</h1>",
 		// }
-	
-		// msg.Ack(false)
+
+		_, err = dispatchEmail(email)
+
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		msg.Ack(false)
 	}
 
-	// _, err = dispatchEmail(Email{
-	// 	To: []string{
-	// 		"felipemaejima@gmail.com",
-	// 	},
-	// 	Subject: "Teste",
-	// 	Html:    "<h1>Hello</h1>",
-	// })
-
-	// if err != nil {
-	// 	log.Println(err)
-	// }
 }
-
 
 // todo email service
 func dispatchEmail(data Email) (string, error) {
@@ -100,6 +111,7 @@ func dispatchEmail(data Email) (string, error) {
 		To:      data.To,
 		Subject: data.Subject,
 		Html:    data.Html,
+		Text:    data.Text,
 	}
 
 	sent, err := client.Emails.Send(params)
