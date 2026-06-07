@@ -7,20 +7,14 @@ import (
 )
 
 type Consumer struct {
-	// conn  *amqp.Connection
-	// ch    *amqp.Channel
 	queue string
 }
 
 func NewConsumer(
-	// conn *amqp.Connection,
-	// ch *amqp.Channel,
 	queue string,
 ) *Consumer {
 
 	return &Consumer{
-		// conn:  conn,
-		// ch:    ch,
 		queue: queue,
 	}
 }
