@@ -1,10 +1,10 @@
 {
-  "channel": "email",
+  "channel": "serviceName",
   "message": {
     "to": [
-      "felipemaejima@gmail.com"
+      "email@domain.com"
     ],
-    "subject": "Novo contato",
-    "body": "<h1>Hello</h1>"
+    "subject": "Hello",
+    "body": "<h1>World!</h1>"
   }
 }
