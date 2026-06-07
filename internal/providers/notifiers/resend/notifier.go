@@ -17,7 +17,7 @@ func NewNotifier() *Notifier {
 		client: resend.NewClient(
 			os.Getenv("RESEND_API_KEY"),
 		),
-		from: os.Getenv("EMAIL_DOMAIN"),
+		from: os.Getenv("EMAIL_FROM"),
 	}
 }
 
