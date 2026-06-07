@@ -51,7 +51,8 @@ func (c *Consumer) Consume(
 		err := handler(msg.Body)
 
 		if err != nil {
-			msg.Nack(false, true)
+      // todo jogar para fila dlq
+			msg.Nack(false, false)
 			continue
 		}
 
