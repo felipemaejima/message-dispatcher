@@ -135,7 +135,7 @@ O dispatcher ficará aguardando mensagens na fila configurada.
 
 ---
 
-## 📬 Formato do Payload
+## Formato do Payload
 
 As mensagens publicadas na fila devem seguir o seguinte formato JSON:
 
