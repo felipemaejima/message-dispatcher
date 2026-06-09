@@ -1,4 +1,4 @@
-# 📨 message-dispatcher
+# message-dispatcher
 
 Um **processador de filas extensível** escrito em Go para despachar mensagens por múltiplos serviços de comunicação.
 
@@ -10,7 +10,7 @@ Atualmente implementados:
 
 ---
 
-## ⚙️ Como funciona
+## Como funciona
 
 ```
 [ Provider: Consumer ]  →  [ Application ]  →  [ Provider: Notifier ]
@@ -26,7 +26,7 @@ Atualmente implementados:
 
 ---
 
-## 🏗️ Estrutura do projeto
+## Estrutura do projeto
 
 O projeto segue a **Arquitetura Hexagonal (Ports & Adapters)**: o domínio e a lógica de aplicação são completamente isolados das implementações externas. Novos brokers ou serviços de disparo são adicionados apenas criando um novo provider — sem alterar nada no núcleo.
 
@@ -72,7 +72,7 @@ message-dispatcher/
 
 ---
 
-## 📦 Tecnologias
+## Tecnologias
 
 | Tecnologia | Uso |
 |---|---|
@@ -83,7 +83,7 @@ message-dispatcher/
 
 ---
 
-## 🚀 Como executar
+## Como executar
 
 ### Pré-requisitos
 
@@ -165,7 +165,7 @@ O campo `channel` é o identificador que o dispatcher usa para rotear a mensagem
 
 ---
 
-## 🔌 Extensibilidade
+## Extensibilidade
 
 Para adicionar uma nova implementação, basta criar um novo provider respeitando o contrato definido nos `ports` e registrá-lo no dispatcher.
 
@@ -190,7 +190,7 @@ Crie uma pasta em `internal/providers/consumers/<nome>/` implementando a interfa
 
 ---
 
-## 🔧 Variáveis de Ambiente
+## Variáveis de Ambiente
 
 | Variável | Descrição |
 |---|---|
@@ -202,7 +202,7 @@ Crie uma pasta em `internal/providers/consumers/<nome>/` implementando a interfa
 
 ---
 
-## 📄 Licença
+## Licença
 
 Este projeto está sob a licença MIT.
 
