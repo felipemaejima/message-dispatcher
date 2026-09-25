@@ -32,6 +32,8 @@ O projeto segue a **Arquitetura Hexagonal (Ports & Adapters)**: o domínio e a l
 
 ```
 message-dispatcher/
+├── docker-compose.yml                      # Ambiente local (RabbitMQ)
+├── Makefile                                # Comandos de desenvolvimento
 ├── cmd/
 │   └── main.go                             # Entrypoint da aplicação
 ├── internal/
@@ -87,9 +89,11 @@ message-dispatcher/
 
 ### Pré-requisitos
 
-- [Go 1.21+](https://golang.org/dl/)
-- Instância de [RabbitMQ](https://www.rabbitmq.com/) acessível
+- [Docker](https://docs.docker.com/get-docker/) com Compose
+- `make` (`sudo apt install make`)
 - Conta no [Resend](https://resend.com) com domínio verificado
+
+Não é necessário ter Go instalado: o toolchain roda em container.
 
 ### 1. Clone o repositório
 
@@ -104,34 +108,42 @@ cd message-dispatcher
 cp .env.example .env
 ```
 
-Edite o `.env` com seus valores:
+Preencha `RESEND_API_KEY` e `EMAIL_FROM`. Os valores de RabbitMQ já vêm apontando
+para o `docker-compose.yml`.
 
-```env
-ENVIRONMENT=development
-
-# Resend (notifier de e-mail)
-RESEND_API_KEY=re_xxxxxxxxxxxx
-EMAIL_FROM=email@seudominio.com
-
-# RabbitMQ (consumer provider)
-RABBITMQ_BROKER_URL=amqp://guest:guest@localhost:5672/
-MESSAGES_QUEUE=messages
-```
-OBS: O arquivo de configuração deve ser adaptado de acordo com as implementações ativas.
-
-### 3. Instale as dependências
+### 3. Suba o ambiente e rode
 
 ```bash
-go mod download
-```
-
-### 4. Execute a aplicação
-
-```bash
-go run ./cmd
+make up    # sobe o RabbitMQ e declara a fila
+make run   # roda o dispatcher
 ```
 
 O dispatcher ficará aguardando mensagens na fila configurada.
+
+Em outro terminal:
+
+```bash
+make publish   # publica o payload.json na fila
+make peek      # mostra quantas mensagens estão na fila
+```
+
+### Comandos disponíveis
+
+`make help` lista todos. Os principais:
+
+| Comando | Descrição |
+|---|---|
+| `make up` / `make down` | Sobe / derruba o RabbitMQ |
+| `make run` | Roda o dispatcher |
+| `make publish` | Publica `payload.json` na fila |
+| `make peek` | Conta mensagens na fila |
+| `make logs` | Logs do RabbitMQ |
+| `make test` | Testes unitários (sem rede) |
+| `make test-integration` | Testes de integração (envia e-mail real) |
+| `make build` | Compila o binário local |
+| `make shell` | Shell no container Go |
+
+A UI de gerenciamento do RabbitMQ fica em http://localhost:15672 (`app` / `app`).
 
 ---
 

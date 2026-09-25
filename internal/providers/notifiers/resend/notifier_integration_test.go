@@ -8,6 +8,10 @@ import (
 )
 
 func TestSendEmail(t *testing.T) {
+	if testing.Short() {
+		t.Skip("integracao: exige RESEND_API_KEY e envia e-mail real")
+	}
+
 	err := godotenv.Load("../../../.env")
 
 	if err != nil {

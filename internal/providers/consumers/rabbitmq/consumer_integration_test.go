@@ -10,6 +10,10 @@ import (
 )
 
 func TestConsumeMessage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("integracao: exige RabbitMQ no ar")
+	}
+
 
 	err := godotenv.Load("../../../../.env")
 
